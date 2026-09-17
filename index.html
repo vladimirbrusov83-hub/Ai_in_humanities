@@ -1916,7 +1916,7 @@ a.fbtn{text-decoration:none; display:inline-flex; align-items:center;}
     <div class="section-head">
       <div class="eyebrow">The honest part</div>
       <h2>Four contested zones</h2>
-      <p class="lede">These are live scholarly disagreements, not settled questions. Each one gives you two positions worth taking seriously, a traffic light for common uses, and a short exercise: an AI-generated sample to interrogate rather than accept. Open any zone.</p>
+      <p class="lede">These are live scholarly disagreements, not settled questions. Each one gives you two positions worth taking seriously, a traffic light for common uses, and a short exercise: an AI-generated sample to interrogate rather than accept. Where the argument also turns on law or material practice, a zone carries a short note on that backdrop. Open any zone.</p>
     </div>
     <div class="light-key" aria-hidden="true">
       <span><i class="lt green"></i>generally fine</span>
@@ -2268,7 +2268,7 @@ const phases = [
     rMore:{decisions:["Have I seen this quotation in the source with my own eyes, or only in someone else's footnote?","Which edition is this, and does the difference change my reading?","What did this word mean when it was written, rather than what it means now?"],
       cost:"Underestimated in every timeline. Budget real weeks for verification before submission, not an afternoon."},
     aMore:{tools:["Citation formatting into Chicago, MLA or a journal's house style","Consistency checks across a long bibliography","Drafting historical context to then verify against scholarship"],
-      watch:"A fabricated citation is the highest-stakes failure mode in text-based scholarship, and the hardest to catch, because it is designed — statistically — to look exactly like a real one. It is also measurably worse here than in the sciences: only 38.3% of ChatGPT's humanities citations carried a DOI at all, against 70.9% in the natural sciences, and 70% of GPT-4's cited book chapters were fabricated. Worked example, with sources, in the contested zones below."},
+      watch:"A fabricated citation is the highest-stakes failure mode in text-based scholarship, and the hardest to catch, because it is designed — statistically — to look exactly like a real one. It is also measurably worse here than in the sciences: only 38.3% of ChatGPT's humanities citations carried a DOI at all, against 70.9% in the natural sciences, and book chapters fared worse than any other format. Worked example, with sources, in the contested zones below."},
     lMore:{where:["Reference librarian verification of a citation against actual holdings","Style manual authority (Chicago, MLA) for the edge cases the generators get wrong","Edition, translation and provenance expertise","Retraction Watch and correction notices"],
       ask:"“Can you help me confirm this source exists and that I'm citing the right edition?”"}
   },
@@ -2399,7 +2399,7 @@ const zones = [
         "If the journal turned out to exist, what would you still need to confirm?"
       ],
       notice:"Nothing here exists: not the scholar, not the article, not the journal. It reads as real because it is built from the surface features of real citations — a quotable epigrammatic phrase, a colon-plus-subtitle title, a plausible date range, a volume and issue number, real-looking page extents. Fastest check: search the journal title in your library catalogue and in the Directory of Open Access Journals. If the container does not exist, nothing inside it can. If it did exist, you would still need to open volume 14 and find the words on page 211 — a real journal is routinely paired with a fabricated article, and a real article with a fabricated quotation.",
-      evidence:"Walters and Wilder checked 636 generated citations across 84 texts on 42 topics (<i>Scientific Reports</i> 13:14045, 2023): 55% of GPT-3.5&rsquo;s citations and 18% of GPT-4&rsquo;s were fabricated outright, and 70% of GPT-4&rsquo;s cited book chapters were fabricated — the format these disciplines lean on hardest. Mugaanyi and colleagues ran the same test across disciplines (<i>JMIR</i> 2024, e52935) and found the gap: only 38.3% of humanities citations carried a DOI at all, against 70.9% in the natural sciences, and where a DOI was supplied it was correct 8.5% of the time against 32.7%. Newer models fabricate less, not none — and the better the model, the more convincing whatever is left."
+      evidence:"Walters and Wilder checked 636 generated citations across 84 texts on 42 topics (<i>Scientific Reports</i> 13:14045, 2023): 55% of GPT-3.5&rsquo;s citations and 18% of GPT-4&rsquo;s were fabricated outright, with book chapters — the format these disciplines lean on hardest — the worst-performing category in both models. Mugaanyi and colleagues ran the same test across disciplines (<i>JMIR</i> 2024, e52935) and found the gap: only 38.3% of humanities citations carried a DOI at all, against 70.9% in the natural sciences, and across all citations generated the DOI was correct 8.5% of the time in the humanities against 32.7% in the natural sciences. Newer models fabricate less, not none — and the better the model, the more convincing whatever is left."
     }
   },
   {
