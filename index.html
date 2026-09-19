@@ -720,6 +720,34 @@ footer.closing .final{
 }
 .back-top:hover{border-color:var(--cyan); color:var(--cyan-deep); transform:translateY(-2px);}
 
+/* ---------- floating back-to-top ---------- */
+#toTop{
+  position:fixed;
+  bottom:22px; right:22px;
+  z-index:500;
+  font-family:var(--mono);
+  font-size:12px;
+  letter-spacing:0.06em;
+  background:rgba(26,35,49,0.84);
+  backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
+  color:var(--ink-soft);
+  border:1px solid var(--rule);
+  padding:11px 16px;
+  border-radius:999px;
+  cursor:pointer;
+  box-shadow:0 8px 26px -10px #000, inset 0 1px 0 rgba(255,255,255,0.06);
+  display:flex; align-items:center; gap:8px;
+  opacity:0; visibility:hidden; transform:translateY(10px);
+  transition:opacity .25s, transform .25s, visibility .25s, border-color .25s, color .25s, box-shadow .25s;
+}
+#toTop.show{opacity:1; visibility:visible; transform:none;}
+#toTop:hover{border-color:var(--cyan); color:var(--cyan-deep); box-shadow:0 10px 30px -10px #000, 0 0 24px -8px var(--cyan-glow);}
+#toTop .arrow{font-size:13px; line-height:1;}
+@media (prefers-reduced-motion:reduce){
+  #toTop{transition:opacity .01s, visibility .01s; transform:none;}
+}
+
 @media (max-width:1100px){
   .hero-ring{display:none;}
 }
@@ -736,6 +764,7 @@ footer.closing .final{
 }
 @media (max-width:640px){
   #lensToggle{top:auto; bottom:18px; right:16px; font-size:11px; padding:10px 14px;}
+  #toTop{bottom:18px; right:auto; left:16px; font-size:11px; padding:10px 14px;}
   .shelf-grid{grid-template-columns:1fr;}
   .hero-stats{gap:26px;}
   .phase-controls{flex-direction:column; align-items:flex-start;}
@@ -758,7 +787,7 @@ footer.closing .final{
   }
   .orch-card, .orch-node, .orch-helper, .orch-ask, .orch-loop, .col p, .col-detail li, .contested-card p, .floor-card p{color:#222 !important;}
   .col-researcher, .col-ai, .col-library{background:#f6f6f6 !important;}
-  #lensToggle, #progress, .scroll-cue, .chevron, .col-more-cue,
+  #lensToggle, #toTop, #progress, .scroll-cue, .chevron, .col-more-cue,
   .phase-controls, .curve-title .hint, .back-top, .hero-ring{display:none !important;}
   .phase-body, .col-detail{max-height:none !important;}
   .phase-card.filtered-out{display:block;}
@@ -1615,6 +1644,7 @@ a.fbtn{text-decoration:none; display:inline-flex; align-items:center;}
 <div class="sky" aria-hidden="true"><i class="neb"></i><i class="stars"></i></div>
 
 <button id="lensToggle" onclick="toggleLens()"><span class="dot"></span><span id="lensLabel">Library lens: off</span></button>
+<button id="toTop" type="button" aria-label="Back to the top"><span class="arrow">&uarr;</span><span>Top</span></button>
 
 <header class="hero">
   <div class="hero-ring hero-anim" style="animation-delay:.85s" aria-hidden="true">
@@ -2696,11 +2726,16 @@ window.addEventListener('resize', () => {
 /* ============ SCROLL PROGRESS BAR ============ */
 const progress = document.getElementById('progress');
 let progressTick = false;
+const toTop = document.getElementById('toTop');
 function updateProgress(){
   const h = document.documentElement;
   const scrolled = h.scrollTop / (h.scrollHeight - h.clientHeight);
   progress.style.transform = 'scaleX(' + Math.max(0, Math.min(1, scrolled)).toFixed(4) + ')';
+  toTop.classList.toggle('show', h.scrollTop > 600);
 }
+toTop.addEventListener('click', () => {
+  window.scrollTo({top:0, behavior: reduceMotion ? 'auto' : 'smooth'});
+});
 window.addEventListener('scroll', () => {
   if(progressTick) return;
   progressTick = true;
