@@ -2637,6 +2637,14 @@ document.querySelectorAll('.phase-head').forEach((h, i) => {
 (function openFromHash(){
   const m = location.hash.match(/^#p(\d+)$/);
   if(!m) return;
+  // a refresh should stay put: the #p hash we wrote when the phase was opened
+  // is for sharing, not for re-jumping the page on every reload
+  let navType = '';
+  try{ navType = (performance.getEntriesByType('navigation')[0] || {}).type || ''; }catch(e){}
+  if(navType === 'reload'){
+    history.replaceState(null, '', location.pathname + location.search);
+    return;
+  }
   const i = parseInt(m[1], 10) - 1;
   if(i >= 0 && i < phases.length) setTimeout(() => jumpTo(i), 350);
 })();
