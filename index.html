@@ -682,8 +682,8 @@ footer.closing .final{
   font-family:var(--mono); font-size:11px; line-height:1.5;
   padding:8px 11px; border-radius:8px;
   box-shadow:0 14px 34px -12px #000;
-  opacity:0; transform:translate(-50%, -8px); transition:opacity .15s;
-  white-space:nowrap;
+  opacity:0; transform:translateY(-8px); transition:opacity .15s;
+  width:max-content; max-width:calc(100% - 16px);
 }
 #curveTip .tt{color:var(--gold-deep); font-weight:700; display:block; margin-bottom:3px;}
 #curveTip .row{display:flex; gap:7px; align-items:center;}
@@ -853,7 +853,7 @@ footer.closing h2::after{margin:20px auto 0;}
   mask-image:radial-gradient(ellipse 80% 78% at 50% 46%, #000 28%, transparent 82%);
   -webkit-mask-image:radial-gradient(ellipse 80% 78% at 50% 46%, #000 28%, transparent 82%);
 }
-.curve-wrap .curve-title, #loadCurve, #curveTip{position:relative; z-index:1;}
+.curve-wrap .curve-title, #loadCurve{position:relative; z-index:1;}
 
 /* ---- 5. hex lattice in the field guide (one section only) ---- */
 #shelf::before{
@@ -2929,13 +2929,16 @@ const curve = (function buildCurve(){
     const px = rect.left + (x/W)*rect.width;
     const py = rect.top + (padT/H)*rect.height;
     const wrapRect = wrap.getBoundingClientRect();
-    tip.style.left = (px - wrapRect.left) + 'px';
     tip.style.top = (py - wrapRect.top) + 'px';
     const lvl = k => ({full:'full',partial:'partial',light:'light'})[p.load[k]];
     tip.innerHTML = `<span class="tt">${(i+1).toString().padStart(2,'0')} · ${p.title}</span>`+
       `<div class="row"><span class="sw" style="background:${series[2].color}"></span>Researcher: ${lvl('r')}</div>`+
       `<div class="row"><span class="sw" style="background:${series[1].color}"></span>Agentic AI: ${lvl('a')}</div>`+
       `<div class="row"><span class="sw" style="background:${series[0].color}"></span>Library: ${lvl('l')}</div>`;
+    // centre on the column, but keep the whole box inside the card
+    const tw = tip.offsetWidth, pad = 8;
+    const cx = px - wrapRect.left;
+    tip.style.left = Math.max(pad, Math.min(cx - tw/2, wrapRect.width - tw - pad)) + 'px';
     tip.style.opacity = '1';
   }
   function hideTip(){
