@@ -278,6 +278,15 @@ section{padding:100px 0; border-bottom:1px solid var(--rule); position:relative;
 .legend-item{display:flex; align-items:center; gap:8px;}
 .legend-bars{display:flex; gap:2px;}
 .legend-bars i{display:block; width:6px; height:12px; background:var(--rule); border-radius:1px;}
+.legend-curve{display:block; margin-bottom:26px;}
+.legend-curve .legend-keys{display:flex; gap:10px 26px; flex-wrap:wrap;}
+.legend-curve .legend-item{line-height:1.5;}
+.legend-curve b{color:var(--ink); font-weight:600;}
+.legend-dot{width:10px; height:10px; border-radius:50%; flex:none;}
+.legend-curve .legend-note{
+  margin:12px 0 0; max-width:74ch;
+  font-family:var(--serif-body); font-size:15px; line-height:1.65; color:var(--ink-soft);
+}
 
 .map-strip{
   display:grid;
@@ -1845,10 +1854,15 @@ a.fbtn{text-decoration:none; display:inline-flex; align-items:center;}
       <h3 class="sub-h2">Who carries the load</h3>
       <p class="lede">The map above shows the order. This shows the weight: the library lane runs heavy from the archive onward and never really drops, because in the humanities the evidence itself is a library holding.</p>
     </div>
-    <div class="legend">
-      <div class="legend-item"><div class="legend-bars"><i style="background:var(--ink)"></i><i style="background:var(--ink)"></i><i style="background:var(--ink)"></i></div> full</div>
-      <div class="legend-item"><div class="legend-bars"><i style="background:var(--ink)"></i><i style="background:var(--ink)"></i><i></i></div> partial</div>
-      <div class="legend-item"><div class="legend-bars"><i style="background:var(--ink)"></i><i></i><i></i></div> light</div>
+    <div class="legend legend-curve">
+      <div class="legend-keys">
+        <div class="legend-item"><span class="legend-dot" style="background:var(--ink)"></span> <b>Researcher</b> &mdash; the scholar&rsquo;s own hours and judgement</div>
+        <div class="legend-item"><span class="legend-dot" style="background:var(--cyan)"></span> <b>Agentic AI</b> &mdash; work a tool can take a first pass at</div>
+        <div class="legend-item"><span class="legend-dot" style="background:var(--gold)"></span> <b>Library</b> &mdash; collections, licensing, expertise, permanence</div>
+      </div>
+      <p class="legend-note">Each line is one of the three. Height = how much of that phase&rsquo;s work it carries:
+        <b>light</b> (a minor hand), <b>partial</b> (a real share), <b>full</b> (it carries the phase).
+        The three lines don&rsquo;t add up to 100% &mdash; a phase can be heavy for everyone at once.</p>
     </div>
     <div class="curve-wrap" id="curveWrap">
       <div class="curve-title">
