@@ -308,6 +308,34 @@ section{padding:100px 0; border-bottom:1px solid var(--rule); position:relative;
 .map-bars .bar.a i.on{background:var(--cyan); box-shadow:0 0 6px var(--cyan-glow);}
 .map-bars .bar.l i.on{background:var(--gold); box-shadow:0 0 6px var(--gold-glow);}
 
+/* ================= PRE-ASSESSMENT SORTER ================= */
+.task-list{display:grid; gap:14px; margin-top:28px;}
+.task-row{
+  border:1px solid var(--rule); border-radius:12px;
+  background:rgba(232,240,243,0.022);
+  padding:18px 22px;
+  display:grid; grid-template-columns:1fr auto; gap:14px 24px; align-items:center;
+  transition:border-color .25s, background .25s;
+}
+.task-row.answered{border-color:var(--rule-soft); background:rgba(232,240,243,0.04);}
+.task-row .tnum{
+  display:block; margin-bottom:5px;
+  font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; color:var(--ink-soft);
+}
+.task-row .tname{font-family:var(--serif-display); font-size:18.5px; line-height:1.35; color:var(--ink);}
+.choices{display:flex; gap:8px; flex-wrap:wrap;}
+.choice{
+  font-family:var(--mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase;
+  background:none; border:1px solid var(--rule); color:var(--ink-soft);
+  padding:9px 14px; border-radius:999px; cursor:pointer;
+  transition:border-color .2s, color .2s, background .2s;
+}
+.choice:hover{color:var(--ink); border-color:var(--ink-soft);}
+.choice:focus-visible{outline:2px solid var(--cyan); outline-offset:2px;}
+.choice.on[data-c="d"]{border-color:var(--cyan); color:var(--cyan-deep); background:rgba(63,208,198,0.13);}
+.choice.on[data-c="a"]{border-color:var(--gold); color:var(--gold-deep); background:rgba(227,169,75,0.13);}
+.choice.on[data-c="r"]{border-color:var(--ink-soft); color:var(--ink); background:rgba(232,240,243,0.09);}
+
 /* ================= PHASE CONTROLS ================= */
 .phase-controls{
   display:flex; justify-content:space-between; align-items:center;
@@ -770,6 +798,7 @@ footer.closing .final{
   .contested-grid{grid-template-columns:1fr;}
   .floor-grid{grid-template-columns:1fr;}
   .shelf-grid{grid-template-columns:1fr 1fr;}
+  .task-row{grid-template-columns:1fr; padding:16px 17px;}
   .phase-head{flex-wrap:wrap;}
   .phase-head .mini-load{width:100%; justify-content:flex-start; margin-top:12px;}
   .map-strip{grid-template-columns:repeat(5, minmax(90px,1fr));}
@@ -1757,6 +1786,17 @@ a.fbtn{text-decoration:none; display:inline-flex; align-items:center;}
   </div>
   <div class="scroll-cue">Scroll</div>
 </header>
+
+<section id="pre">
+  <div class="wrap">
+    <div class="section-head">
+      <div class="eyebrow">Pre-assessment</div>
+      <h2>Quickly, before you read any of it</h2>
+      <p class="lede">Four research tasks. For each one: would you be comfortable <b>delegating</b> it to AI, would you use AI to assist and then <b>verify</b>, or would you want to <b>retain</b> it as your own intellectual work? Don&rsquo;t overthink it. Keep your answers in mind as you go through the map. Your choices stay in this browser and are sent nowhere.</p>
+    </div>
+    <div class="task-list" id="preList"></div>
+  </div>
+</section>
 
 <section id="intro">
   <div class="wrap">
@@ -3357,6 +3397,63 @@ highlightNode = function(i){
    --------------------------------------------------------------------------- */
 function safeGet(k){ try{ return localStorage.getItem(k); }catch(e){ return null; } }
 function safeSet(k, v){ try{ localStorage.setItem(k, v); }catch(e){ /* private mode */ } }
+function safeDel(k){ try{ localStorage.removeItem(k); }catch(e){} }
+
+/* ---------------------------------------------------------------------------
+   THE PRE-ASSESSMENT
+   Four tasks sorted into delegate / augment / retain before the map is read.
+   Ported from delegate.html, where the same four open and close the session.
+   Per device only: nothing is stored beyond this browser.
+   --------------------------------------------------------------------------- */
+const PRE_TASKS = [
+  {id:'keywords',   name:'Generate keywords and related concepts for a research topic'},
+  {id:'literature', name:'Identify scholarly literature on a topic'},
+  {id:'ocr',        name:'OCR a scanned primary source'},
+  {id:'argument',   name:'Develop the central argument of a thesis'}
+];
+const PRE_CATS = [
+  {c:'d', label:'Delegate'},
+  {c:'a', label:'Augment + Verify'},
+  {c:'r', label:'Retain'}
+];
+(function mountPreSorter(){
+  const el = document.getElementById('preList');
+  if(!el) return;
+  PRE_TASKS.forEach((t, i) => {
+    const storeKey = 'hum.pre.' + t.id;
+    const saved = safeGet(storeKey);
+    const row = document.createElement('div');
+    row.className = 'task-row' + (saved ? ' answered' : '');
+    const n = (i + 1).toString().padStart(2,'0');
+    row.innerHTML = `
+      <div>
+        <span class="tnum">Task ${n}</span>
+        <div class="tname">${t.name}</div>
+      </div>
+      <div class="choices" role="group" aria-label="${t.name}">
+        ${PRE_CATS.map(c => `<button class="choice${saved === c.c ? ' on' : ''}" type="button" data-c="${c.c}" aria-pressed="${saved === c.c}">${c.label}</button>`).join('')}
+      </div>`;
+    el.appendChild(row);
+    row.querySelectorAll('.choice').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const already = btn.classList.contains('on');
+        row.querySelectorAll('.choice').forEach(b => {
+          b.classList.remove('on');
+          b.setAttribute('aria-pressed','false');
+        });
+        if(already){
+          safeDel(storeKey);
+          row.classList.remove('answered');
+        } else {
+          btn.classList.add('on');
+          btn.setAttribute('aria-pressed','true');
+          safeSet(storeKey, btn.dataset.c);
+          row.classList.add('answered');
+        }
+      });
+    });
+  });
+})();
 
 function copyText(text, flagEl){
   const done = () => {
