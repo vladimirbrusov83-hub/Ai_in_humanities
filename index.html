@@ -1337,6 +1337,25 @@ body.lens-on #lensToggle::after{animation:sweep .9s ease-out;}
   stroke-linecap:round;
 }
 #spiral .sp-loop.hot{opacity:1; stroke-width:2.6;}
+
+/* the dashed spiral track drifts slowly outward, the way the cycle travels */
+@keyframes spiralDrift{ to{ stroke-dashoffset:-11; } }
+#spiral .sp-path{ animation:spiralDrift 2.2s linear infinite; }
+
+/* a gold pulse runs along each backward loop, toward the arrowhead */
+@keyframes loopFlow{ from{ stroke-dashoffset:100; } to{ stroke-dashoffset:-8; } }
+#spiral .sp-flow{
+  fill:none; stroke:var(--gold); stroke-width:2.8; stroke-linecap:round;
+  pointer-events:none; opacity:.95;
+  stroke-dasharray:8 92;
+  filter:drop-shadow(0 0 6px var(--gold-glow));
+  animation:loopFlow 3.6s cubic-bezier(.5,0,.5,1) infinite;
+}
+#spiral .sp-loop.hot + .sp-flow{ animation-duration:1.5s; stroke-width:3.4; }
+
+/* the arrowhead breathes in time with the pulses */
+@keyframes loopTipPulse{ 0%,100%{ opacity:.65; } 50%{ opacity:1; } }
+#spiral #loopArrow path{ animation:loopTipPulse 3.6s ease-in-out infinite; }
 #spiral .sp-node{
   fill:var(--paper2); stroke:var(--ink-soft); stroke-width:1.4;
   cursor:pointer; transition:fill .22s, stroke .22s, r .22s;
@@ -1629,6 +1648,7 @@ a.fbtn{text-decoration:none; display:inline-flex; align-items:center;}
 }
 @media (prefers-reduced-motion:reduce){
   #spiral *{transition:none !important; animation:none !important;}
+  #spiral .sp-flow{display:none !important;}   /* no stranded dash stub */
   .zone-body, .ex-notice{transition:none !important;}
 }
 @media print{
@@ -3145,6 +3165,12 @@ const spiralNodes = (function buildSpiral(){
       });
       path.appendChild(mk('title', {}, `Phase ${p.num.slice(0,2)} sends you back to phase ${target.toString().padStart(2,'0')}`));
       svg.appendChild(path);
+      // a normalised twin (pathLength 100) carries the travelling gold pulse
+      const flow = mk('path', {
+        class:'sp-flow', d: path.getAttribute('d'), pathLength:'100',
+        style:`animation-delay:${(loopCount - 1) * 1.1}s`
+      });
+      svg.appendChild(flow);
       loopEls.push(path);
       // remember how the arrow arrives, so the target's label can dodge it
       approach[j] = [dx / len, dy / len];
