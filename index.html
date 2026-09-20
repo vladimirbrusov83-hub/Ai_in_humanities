@@ -1437,6 +1437,7 @@ h3.sub-h2{font-size:26px;}
 }
 .zone-card:hover{border-color:var(--ink-soft);}
 .zone-card.open{border-color:var(--gold); box-shadow:0 0 34px -12px var(--gold-glow);}
+.zone-card{scroll-margin-top:26px;}
 .zone-head{
   display:grid; grid-template-columns:auto 1fr auto auto; gap:18px; align-items:center;
   padding:22px 26px; cursor:pointer;
@@ -2541,6 +2542,13 @@ phases.forEach((p, idx) => {
   phaseList.appendChild(card);
 });
 
+// bring a freshly opened panel to the top of the view. When another panel
+// collapsed above it the layout is still animating, so wait that out first.
+function scrollPanelIntoView(el, wait){
+  const go = () => el.scrollIntoView({behavior: reduceMotion ? 'auto' : 'smooth', block:'start'});
+  if(wait) setTimeout(go, 470); else requestAnimationFrame(go);
+}
+
 function toggleCard(idx, keepOthers){
   const card = document.getElementById('phase-'+idx);
   const body = document.getElementById('body-'+idx);
@@ -2553,15 +2561,19 @@ function toggleCard(idx, keepOthers){
   } else {
     // one phase at a time, so the page never grows out from under you
     // ("Expand all" passes keepOthers and opts out)
+    let closedAbove = false;
     if(!keepOthers){
       document.querySelectorAll('.phase-card.open').forEach(c => {
         const other = parseInt(c.id.replace('phase-',''), 10);
-        if(other !== idx) toggleCard(other, true);
+        if(other === idx) return;
+        if(other < idx) closedAbove = true;   // the page will shift upward
+        toggleCard(other, true);
       });
     }
     card.classList.add('open');
     body.style.maxHeight = body.scrollHeight + 'px';
     head.setAttribute('aria-expanded','true');
+    if(!keepOthers) scrollPanelIntoView(card, closedAbove);
     // deep link: shareable URL for this phase
     history.replaceState(null, '', '#p' + (idx+1));
   }
@@ -2629,8 +2641,8 @@ expandBtn.addEventListener('click', () => {
 
 function jumpTo(idx){
   const card = document.getElementById('phase-'+idx);
-  if(!card.classList.contains('open')) toggleCard(idx);
-  card.scrollIntoView({behavior:'smooth', block:'center'});
+  if(!card.classList.contains('open')) toggleCard(idx);   // that scrolls it into place
+  else scrollPanelIntoView(card, false);
 }
 
 function toggleColumn(evt, idx, which){
@@ -3311,9 +3323,11 @@ highlightNode = function(i){
     const body = card.querySelector('.zone-body');
     const toggle = () => {
       // opening a zone closes whichever one was open
+      let closedAbove = false;
       if(!card.classList.contains('open')){
         document.querySelectorAll('.zone-card.open').forEach(other => {
           if(other === card) return;
+          if(other.compareDocumentPosition(card) & Node.DOCUMENT_POSITION_FOLLOWING) closedAbove = true;
           other.classList.remove('open');
           other.querySelector('.zone-head').setAttribute('aria-expanded','false');
           other.querySelector('.zone-body').style.maxHeight = '0px';
@@ -3322,6 +3336,7 @@ highlightNode = function(i){
       const open = card.classList.toggle('open');
       head.setAttribute('aria-expanded', open ? 'true' : 'false');
       body.style.maxHeight = open ? body.scrollHeight + 'px' : '0px';
+      if(open) scrollPanelIntoView(card, closedAbove);
     };
     head.addEventListener('click', toggle);
     head.addEventListener('keydown', e => {
