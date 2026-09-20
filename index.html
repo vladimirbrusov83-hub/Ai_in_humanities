@@ -314,7 +314,9 @@ section{padding:100px 0; border-bottom:1px solid var(--rule); position:relative;
   gap:16px; flex-wrap:wrap; margin-bottom:26px;
 }
 .filter-row{display:flex; gap:8px; flex-wrap:wrap;}
-.section-toggle{margin-top:20px; display:inline-flex; align-items:center; gap:10px;}
+.section-toggle{display:inline-flex; align-items:center; gap:10px;}
+.fold-head{margin-bottom:0; display:flex; align-items:center; gap:20px; flex-wrap:wrap; max-width:none;}
+.fold-head + .section-fold .section-head h2{margin-top:0;}
 .section-toggle .chevron{font-size:16px; margin-left:0; transform:rotate(45deg); color:var(--cyan);}
 .section-toggle[aria-expanded="false"] .chevron{transform:none; color:var(--ink-soft);}
 .section-fold{overflow:hidden; transition:max-height .45s ease;}
@@ -1895,13 +1897,15 @@ a.fbtn{text-decoration:none; display:inline-flex; align-items:center;}
 
 <section id="phases">
   <div class="wrap">
-    <div class="section-head">
+    <div class="section-head fold-head">
       <div class="eyebrow">Phase by phase</div>
-      <h2>What you own, what AI can touch, where the library leads</h2>
-      <p class="lede">Each phase: what the scholar owns, what AI does usefully today (always as a first pass to verify), and where the library leads. Phases that send you backward carry a gold loop badge.</p>
       <button class="fbtn section-toggle" id="phasesToggle" aria-expanded="true" aria-controls="phasesFold">Hide the ten phases<span class="chevron">+</span></button>
     </div>
     <div class="section-fold" id="phasesFold">
+    <div class="section-head">
+      <h2>What you own, what AI can touch, where the library leads</h2>
+      <p class="lede">Each phase: what the scholar owns, what AI does usefully today (always as a first pass to verify), and where the library leads. Phases that send you backward carry a gold loop badge.</p>
+    </div>
     <div class="phase-controls">
       <div class="filter-row" id="filterRow" role="group" aria-label="Filter phases">
         <button class="fbtn on" data-f="all">All 10</button>
