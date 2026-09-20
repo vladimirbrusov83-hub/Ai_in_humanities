@@ -2541,7 +2541,7 @@ phases.forEach((p, idx) => {
   phaseList.appendChild(card);
 });
 
-function toggleCard(idx){
+function toggleCard(idx, keepOthers){
   const card = document.getElementById('phase-'+idx);
   const body = document.getElementById('body-'+idx);
   const head = card.querySelector('.phase-head');
@@ -2551,6 +2551,14 @@ function toggleCard(idx){
     body.style.maxHeight = null;
     head.setAttribute('aria-expanded','false');
   } else {
+    // one phase at a time, so the page never grows out from under you
+    // ("Expand all" passes keepOthers and opts out)
+    if(!keepOthers){
+      document.querySelectorAll('.phase-card.open').forEach(c => {
+        const other = parseInt(c.id.replace('phase-',''), 10);
+        if(other !== idx) toggleCard(other, true);
+      });
+    }
     card.classList.add('open');
     body.style.maxHeight = body.scrollHeight + 'px';
     head.setAttribute('aria-expanded','true');
@@ -2613,8 +2621,8 @@ expandBtn.addEventListener('click', () => {
   visible.forEach(c => {
     const i = parseInt(c.id.replace('phase-',''), 10);
     const isOpen = c.classList.contains('open');
-    if(anyClosed && !isOpen) toggleCard(i);
-    if(!anyClosed && isOpen) toggleCard(i);
+    if(anyClosed && !isOpen) toggleCard(i, true);
+    if(!anyClosed && isOpen) toggleCard(i, true);
   });
   expandBtn.textContent = anyClosed ? 'Collapse all' : 'Expand all';
 });
@@ -3302,6 +3310,15 @@ highlightNode = function(i){
     const head = card.querySelector('.zone-head');
     const body = card.querySelector('.zone-body');
     const toggle = () => {
+      // opening a zone closes whichever one was open
+      if(!card.classList.contains('open')){
+        document.querySelectorAll('.zone-card.open').forEach(other => {
+          if(other === card) return;
+          other.classList.remove('open');
+          other.querySelector('.zone-head').setAttribute('aria-expanded','false');
+          other.querySelector('.zone-body').style.maxHeight = '0px';
+        });
+      }
       const open = card.classList.toggle('open');
       head.setAttribute('aria-expanded', open ? 'true' : 'false');
       body.style.maxHeight = open ? body.scrollHeight + 'px' : '0px';
